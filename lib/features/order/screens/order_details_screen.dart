@@ -205,30 +205,49 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> with WidgetsBin
                 Expanded(child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Column(children: [
-
-                    Row(children: [
-                      Text('${parcel! ? 'delivery_id'.tr : 'order_id'.tr}:', style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500
-                      )),
-                      const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                      Text(controllerOrderModel.id.toString(), style: PoppinsMedium.copyWith( fontSize: Dimensions.fontSizeExtraLarge, color: Theme.of(context).primaryColor,fontWeight: FontWeight.w600)),
-                      const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                      const Expanded(child: SizedBox()),
-                      Container(height: 7, width: 7, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.green)),
-                      const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                      Text(
-                        controllerOrderModel.orderStatus!.tr,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500
-                        ),
-                      ),
-                    ]),
+                        const SizedBox(height: Dimensions.paddingSizeLarge),
+                     Text(
+                            "ORDER ID",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500
+                            ),
+                          ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                          Text('${controllerOrderModel.id.toString()}', style: TextStyle(
+                            fontSize: 50,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 3,
+                          )),
+                      
+                         
+                        ]),
+                    // Row(children: [
+                    //   Text('${parcel! ? 'delivery_id'.tr : 'order_id'.tr}:', style: TextStyle(
+                    //     fontSize: 15,
+                    //     fontWeight: FontWeight.w500
+                    //   )),
+                    //   const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                    //   Text(controllerOrderModel.id.toString(), style: PoppinsMedium.copyWith( fontSize: Dimensions.fontSizeExtraLarge, color: Theme.of(context).primaryColor,fontWeight: FontWeight.w600)),
+                    //   const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                    //   const Expanded(child: SizedBox()),
+                    //   Container(height: 7, width: 7, decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.green)),
+                    //   const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                    //   Text(
+                    //     controllerOrderModel.orderStatus!.tr,
+                    //     style: TextStyle(
+                    //       fontSize: 15,
+                    //       fontWeight: FontWeight.w500
+                    //     ),
+                    //   ),
+                    // ]),
                     // const SizedBox(height: Dimensions.paddingSizeLarge),
 
                     Row(children: [
-                      Text('${parcel ? 'charge_payer'.tr : 'item'.tr}:', style: TextStyle(
+                      Text('${parcel! ? 'charge_payer'.tr : 'item'.tr}:', style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500
                       )),
@@ -338,7 +357,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> with WidgetsBin
                     ),
                     const SizedBox(height: Dimensions.paddingSizeLarge),
 
-                    Padding(
+                   (parcel || controllerOrderModel.orderStatus != 'picked_up')  ?   SizedBox()  :   Padding(
                       padding: const EdgeInsets.only(left: 0,right: 0),
                       child: InfoCardWidget(
                         title: parcel ? 'receiver_details'.tr : 'customer_contact_details'.tr,

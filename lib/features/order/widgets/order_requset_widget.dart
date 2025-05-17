@@ -455,9 +455,9 @@ class _OrderWidget2State extends State<OrderWidget2> {
                                                     
                                     (Get.find<SplashController>().configModel!.showDmEarning! && Get.find<ProfileController>().profileModel != null
                                                      && Get.find<ProfileController>().profileModel!.earnings == 1) ? Text(
-                                                  //  PriceConverterHelper.convertPrice(widget.orderModel.originalDeliveryCharge! + widget.orderModel.dmTips!),
+                                                   PriceConverterHelper.convertPrice(widget.orderModel.originalDeliveryCharge! + widget.orderModel.dmTips!),
 
-                                                  total.toString(),
+                                                  // total.toString(),
                                                    style: PoppinsBold.copyWith(fontSize: Dimensions.fontSizeLarge),
                                                  ) : const SizedBox(),
       
@@ -514,17 +514,26 @@ class _OrderWidget2State extends State<OrderWidget2> {
                             TextSpan( text: "PickUp:",style: TextStyle(
                               color:  Theme.of(context).disabledColor
                             ) ),
-                            TextSpan(
-                              text: parcel 
+                            // TextSpan(
+                            //   text: parcel 
+                            //     ? (widget.orderModel.parcelCategory != null 
+                            //         ? widget.orderModel.parcelCategory!.name ?? '' 
+                            //         : '') 
+                            //     : (widget.orderModel.storeName ?? 'no_store_data_found'.tr),
+                            //   style: PoppinsMedium.copyWith(fontSize: Dimensions.paddingSizeDefault,fontWeight: FontWeight.bold ), // Style for the main text
+                            // ),
+                            // You can add more TextSpan widgets here for additional styling if needed
+                          ],
+                        ),
+                      ),
+                      Text(
+                         parcel 
                                 ? (widget.orderModel.parcelCategory != null 
                                     ? widget.orderModel.parcelCategory!.name ?? '' 
                                     : '') 
                                 : (widget.orderModel.storeName ?? 'no_store_data_found'.tr),
-                              style: PoppinsMedium.copyWith(fontSize: Dimensions.fontSizeSmall), // Style for the main text
-                            ),
-                            // You can add more TextSpan widgets here for additional styling if needed
-                          ],
-                        ),
+                              style: PoppinsMedium.copyWith(fontSize: Dimensions.paddingSizeDefault + 2,fontWeight: FontWeight.bold ), 
+                            
                       ),
                         const SizedBox(height: Dimensions.paddingSizeExtraSmall),
                       
@@ -693,11 +702,11 @@ class _OrderWidget2State extends State<OrderWidget2> {
                           style:  PoppinsMedium.copyWith(fontSize: Dimensions.fontSizeSmall,color: Theme.of(context).disabledColor  ),
                         ),
                         const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-                         Text(
+                     (parcel || widget.orderModel.orderStatus != 'picked_up')  ?  Text("Not Available")  :    Text(
                           parcel ? widget.orderModel.receiverDetails?.contactPersonName ?? '' : widget.orderModel.deliveryAddress?.contactPersonName ?? '', maxLines: 1, overflow: TextOverflow.ellipsis,
                           style: PoppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor),
                         ),
-                        Text(
+                     (parcel || widget.orderModel.orderStatus != 'picked_up')  ?  SizedBox()  :   Text(
                           parcel ? widget.orderModel.receiverDetails?.address ?? '' : widget.orderModel.deliveryAddress?.address ?? '', maxLines: 1, overflow: TextOverflow.ellipsis,
                           style: PoppinsRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).disabledColor),
                         ),
@@ -719,7 +728,7 @@ class _OrderWidget2State extends State<OrderWidget2> {
                                 // }, icon: Image.asset("assets/image/phone.png",height: 20,)),
                                 //            ],
                                 //          ),
-                          Row(
+                      (parcel || widget.orderModel.orderStatus != 'picked_up')  ?  SizedBox()  :      Row(
                             children: [
                               Padding(
                                                    padding: const EdgeInsets.only(left: 0),

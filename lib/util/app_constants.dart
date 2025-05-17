@@ -5,7 +5,10 @@ class AppConstants {
   static const String appName = 'Uolo Rider';
   static const double appVersion = 2.12; ///Flutter sdk 3.24.5
 
-  static const String baseUrl = 'https://orders.uolodelivery.com';
+  static const String baseUrl =
+  // "https://testorders.uolodelivery.com";
+  
+  'https://orders.uolodelivery.com';
 
   static const String configUri = '/api/v1/config';
   static const String forgetPasswordUri = '/api/v1/auth/delivery-man/forgot-password';
