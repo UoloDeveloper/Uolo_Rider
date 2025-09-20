@@ -6,6 +6,7 @@ import 'package:sixam_mart_delivery/features/order/domain/models/ignore_model.da
 import 'package:sixam_mart_delivery/features/order/domain/models/order_cancellation_body.dart';
 import 'package:sixam_mart_delivery/features/order/domain/models/order_details_model.dart';
 import 'package:sixam_mart_delivery/features/order/domain/models/order_model.dart';
+import 'package:sixam_mart_delivery/features/order/domain/models/order_request_model.dart';
 import 'package:sixam_mart_delivery/features/order/domain/models/update_status_body_model.dart';
 import 'package:sixam_mart_delivery/features/order/domain/repositories/order_repository_interface.dart';
 import 'package:sixam_mart_delivery/features/order/domain/services/order_service_interface.dart';
@@ -35,7 +36,7 @@ class OrderService implements OrderServiceInterface {
   }
 
   @override
-  Future<List<OrderModel>?> getLatestOrders() async {
+  Future<DeliveryRequestModel?> getLatestOrders() async {
     return await orderRepositoryInterface.getLatestOrders();
   }
 
@@ -50,8 +51,13 @@ class OrderService implements OrderServiceInterface {
   }
 
   @override
-  Future<ResponseModel> acceptOrder(int? orderID) async {
-    return await orderRepositoryInterface.acceptOrder(orderID);
+  Future<ResponseModel> acceptOrder(int? orderID , int? requestId) async {
+    return await orderRepositoryInterface.acceptOrder(orderID ,requestId);
+  }
+
+  @override
+  Future<ResponseModel> declinetOrder(int? orderID , int? requestId) async {
+    return await orderRepositoryInterface.declineOrder(orderID ,requestId);
   }
 
   @override

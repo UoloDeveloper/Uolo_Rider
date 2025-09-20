@@ -385,5 +385,20 @@
   "please_enter_your_new_password_and_confirm_password": "Please enter your new password and confirm password",
   "number_verification_is_successful": "Number verification is successful",
   "please_set_your_new_password": "Please set your new password",
-  "back_press_again_to_exit": "Back press again to exit"
+  "back_press_again_to_exit": "Back press again to exit",
+
+  "notification_is_disabled_please_allow_notification" : "Notification is disabled. Please allow notification",
+  "for_better_performance_allow_notification_to_run_in_background" : "For better performance, allow notification to run in the background",
+  "system_notification" : "System notification",
+  "background_notification" : "Background notification",
+  "allow" : "Allow",
+  "disable" : "Disable",
+  "to_run_notification_in_background" : "to run notification in background?",
+  "from_running_notification_in_background" : "from running notification in background?",
+  "you_will_be_able_to_get_order_notification_even_if_you_are_not_in_the_app" : "You will be able to get order notification even if you are not in the app",
+  "will_run_notification_service_in_the_background_always" : "will run notification service in the background always",
+  "will_not_run_notification_service_in_the_background_always" : "will not run notification service in the background always",
+  "notification_will_always_send_alert_from_the_background" : "Notification will always send alert from the background",
+  "notification_will_not_always_send_alert_from_the_background" : "Notification will not always send alert from the background",
+  "make_sure_to_enable_app_notifications_first" : "Make sure to enable app notifications first"
 }

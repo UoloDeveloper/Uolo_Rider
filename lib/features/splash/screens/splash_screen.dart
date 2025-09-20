@@ -144,8 +144,8 @@ class SplashScreenState extends State<SplashScreen> {
           padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Image.asset(Images.logo, width: 200),
-            const SizedBox(height: Dimensions.paddingSizeSmall),
-            Text('suffix_name'.tr, style: PoppinsMedium, textAlign: TextAlign.center),
+            // const SizedBox(height: Dimensions.paddingSizeSmall),
+            // Text('suffix_name'.tr, style: PoppinsMedium, textAlign: TextAlign.center),
           ]),
         ),
       ),

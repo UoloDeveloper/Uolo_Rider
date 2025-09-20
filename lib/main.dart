@@ -7,6 +7,7 @@ import 'package:sixam_mart_delivery/features/language/controllers/language_contr
 import 'package:sixam_mart_delivery/features/splash/controllers/splash_controller.dart';
 import 'package:sixam_mart_delivery/common/controllers/theme_controller.dart';
 import 'package:sixam_mart_delivery/features/notification/domain/models/notification_body_model.dart';
+import 'package:sixam_mart_delivery/helper/backgroundtaskbuilder.dart';
 import 'package:sixam_mart_delivery/helper/notification_helper.dart';
 import 'package:sixam_mart_delivery/helper/route_helper.dart';
 import 'package:sixam_mart_delivery/theme/dark_theme.dart';
@@ -30,7 +31,7 @@ Future<void> main() async {
   }
   setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
-
+//  await setupBackgroundTask();
 
   if(GetPlatform.isAndroid) {
     
@@ -43,10 +44,10 @@ Future<void> main() async {
   
       ),
     );
-  }else {
+  }
+  else {
     await Firebase.initializeApp();
   }
-
 
   Map<String, Map<String, String>> languages = await di.init();
 

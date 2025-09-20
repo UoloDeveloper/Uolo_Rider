@@ -161,21 +161,21 @@ class LocationCardWidget extends StatelessWidget {
                     icon: Images.warning, title: 'are_you_sure_to_accept'.tr,
                     description: parcel ? 'you_want_to_accept_this_delivery'.tr : 'you_want_to_accept_this_order'.tr,
                     onYesPressed: () {
-                      orderController.acceptOrder(orderModel.id, index, orderModel).then((isSuccess) {
-                        if(isSuccess) {
-                          onTap();
-                          orderModel.orderStatus = (orderModel.orderStatus == 'pending' || orderModel.orderStatus == 'confirmed')
-                              ? 'accepted' : orderModel.orderStatus;
-                          Get.toNamed(
-                            RouteHelper.getOrderDetailsRoute(orderModel.id),
-                            arguments: OrderDetailsScreen(
-                              orderId: orderModel.id, isRunningOrder: true, orderIndex: orderController.currentOrderList!.length-1, fromLocationScreen: true,
-                            ),
-                          );
-                        }else {
-                          Get.find<OrderController>().getLatestOrders();
-                        }
-                      });
+                      // orderController.acceptOrder(orderModel.id, index, orderModel).then((isSuccess) {
+                        // if(isSuccess) {
+                        //   onTap();
+                        //   orderModel.orderStatus = (orderModel.orderStatus == 'pending' || orderModel.orderStatus == 'confirmed')
+                        //       ? 'accepted' : orderModel.orderStatus;
+                        //   Get.toNamed(
+                        //     RouteHelper.getOrderDetailsRoute(orderModel.id),
+                        //     arguments: OrderDetailsScreen(
+                        //       orderId: orderModel.id, isRunningOrder: true, orderIndex: orderController.currentOrderList!.length-1, fromLocationScreen: true,
+                        //     ),
+                        //   );
+                        // }else {
+                        //   Get.find<OrderController>().getLatestOrders();
+                        // }
+                      // });
                     },
                   ), barrierDismissible: false),
                 )),

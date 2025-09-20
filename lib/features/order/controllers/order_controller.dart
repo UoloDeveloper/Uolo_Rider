@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sixam_mart_delivery/common/models/response_model.dart';
+import 'package:sixam_mart_delivery/features/order/domain/models/order_request_model.dart';
 import 'package:sixam_mart_delivery/features/profile/controllers/profile_controller.dart';
 import 'package:sixam_mart_delivery/features/splash/controllers/splash_controller.dart';
 import 'package:sixam_mart_delivery/api/api_client.dart';
@@ -25,9 +26,12 @@ class OrderController extends GetxController implements GetxService {
   List<OrderModel>? _completedOrderList;
   List<OrderModel>? get completedOrderList => _completedOrderList;
   
-  List<OrderModel>? _latestOrderList;
-  List<OrderModel>? get latestOrderList => _latestOrderList;
-  
+  DeliveryRequestModel? _latestOrderList;
+  DeliveryRequestModel? get latestOrderList => _latestOrderList;
+
+  // List<DeliveryRequestModel>? _pendingOrderList;
+  // List<DeliveryRequestModel>? get pendingOrderList => _pendingOrderList;
+
   List<OrderDetailsModel>? _orderDetailsModel;
   List<OrderDetailsModel>? get orderDetailsModel => _orderDetailsModel;
   
@@ -180,12 +184,18 @@ class OrderController extends GetxController implements GetxService {
   }
 
   Future<void> getLatestOrders() async {
-    List<OrderModel>? latestOrderList = await orderServiceInterface.getLatestOrders();
+    _isLoading = true;
+    update();
+    DeliveryRequestModel? latestOrderList = await orderServiceInterface.getLatestOrders();
     if(latestOrderList != null) {
-      _latestOrderList = [];
-      List<int?> ignoredIdList = orderServiceInterface.prepareIgnoreIdList(_ignoredRequests);
-      _latestOrderList!.addAll(orderServiceInterface.processLatestOrders(latestOrderList, ignoredIdList));
+      // showCustomSnackBar('Successfully fetched latest orders i controller ${ _latestOrderList }', isError: false);
+      _latestOrderList = latestOrderList;
+
+      // List<int?> ignoredIdList = orderServiceInterface.prepareIgnoreIdList(_ignoredRequests);
+      // _latestOrderList!.addAll(latestOrderList);
     }
+     _isLoading = false;
+    // update();
     update();
   }
 
@@ -251,14 +261,15 @@ class OrderController extends GetxController implements GetxService {
   }
 
 
-  Future<bool> acceptOrder(int? orderID, int index, OrderModel orderModel) async {
+  Future<bool> acceptOrder(int? orderID,  int? requestId ) async {
     _isLoading = true;
     update();
-    ResponseModel responseModel = await orderServiceInterface.acceptOrder(orderID);
+    ResponseModel responseModel = await orderServiceInterface.acceptOrder(orderID , requestId) ;
     Get.back();
     if(responseModel.isSuccess) {
-      _latestOrderList!.removeAt(index);
-      _currentOrderList!.add(orderModel);
+      // _latestOrderList!.removeAt(index);
+      // _currentOrderList!.add(orderModel);
+          showCustomSnackBar(responseModel.message, isError: false);
     }else {
       showCustomSnackBar(responseModel.message, isError: true);
     }
@@ -267,14 +278,32 @@ class OrderController extends GetxController implements GetxService {
     return responseModel.isSuccess;
   }
 
+ Future<bool> declineOrder(int? orderID,  int? requestId ) async {
+    _isLoading = true;
+    update();
+    ResponseModel responseModel = await orderServiceInterface.declinetOrder(orderID , requestId) ;
+    Get.back();
+    if(responseModel.isSuccess) {
+      // _latestOrderList!.removeAt(index);
+      // _currentOrderList!.add(orderModel);
+          // showCustomSnackBar(responseModel.message, isError: false);
+    }else {
+      // showCustomSnackBar(responseModel.message, isError: true);
+    }
+    _isLoading = false;
+    update();
+    return responseModel.isSuccess;
+  }
+
+
   void getIgnoreList() {
     _ignoredRequests = [];
     _ignoredRequests.addAll(orderServiceInterface.getIgnoreList());
   }
 
   void ignoreOrder(int index) {
-    _ignoredRequests.add(IgnoreModel(id: _latestOrderList![index].id, time: DateTime.now()));
-    _latestOrderList!.removeAt(index);
+    // _ignoredRequests.add(IgnoreModel(id: _latestOrderList![index].id, time: DateTime.now()));
+    // _latestOrderList!.removeAt(index);
     orderServiceInterface.setIgnoreList(_ignoredRequests);
     update();
   }

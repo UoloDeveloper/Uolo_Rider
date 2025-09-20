@@ -186,6 +186,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> with WidgetsBin
                 accepted = controllerOrderModel.orderStatus == AppConstants.accepted;
                 confirmed = controllerOrderModel.orderStatus == AppConstants.confirmed;
                 handover = controllerOrderModel.orderStatus == AppConstants.handover;
+
                 pickedUp = controllerOrderModel.orderStatus == AppConstants.pickedUp;
                 cod = controllerOrderModel.paymentMethod == 'cash_on_delivery';
                 wallet = controllerOrderModel.paymentMethod == 'wallet';
@@ -812,7 +813,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> with WidgetsBin
                   ]),
                 ) : const SizedBox(),
 
-                showDeliveryConfirmImage && controllerOrderModel.orderStatus != 'delivered' && !parcel ? CustomButtonWidget(
+                showDeliveryConfirmImage && controllerOrderModel.orderStatus != 'delivered' && !parcel? CustomButtonWidget(
                   buttonText: 'complete_delivery'.tr,
                   onPressed: () {
                     if(Get.find<SplashController>().configModel!.orderDeliveryVerification!){
@@ -841,6 +842,108 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> with WidgetsBin
                     }
 
                   },
+                ) : parcel || confirmed! || processing! ? SliderButton(
+                  action: () {
+    Get.dialog(ConfirmationDialogWidget(
+                        icon: Images.warning, title: 'are_you_sure_to_confirm'.tr,
+                        description: parcel! ? 'You want to handover this order'.tr : 'You want to handover this Order'.tr,
+                        onYesPressed: () {
+                          orderController.updateOrderStatus(
+                            controllerOrderModel, parcel! ? AppConstants.handover : AppConstants.pickedUp, back: widget.fromLocationScreen? false: true,
+                            gotoDashboard: widget.fromLocationScreen? true: false
+                          );
+                        },
+                      ), barrierDismissible: false);
+                  //   if((cod! && accepted! && !restConfModel && !selfDelivery) || (parcel! && accepted!)) {
+
+                  //     if(orderController.isLoading) {
+                  //       orderController.initLoading();
+                  //     }
+                  //     Get.dialog(ConfirmationDialogWidget(
+                  //       icon: Images.warning, title: 'are_you_sure_to_confirm'.tr,
+                  //       description: parcel! ? 'you_want_to_confirm_this_delivery'.tr : 'you_want_to_confirm_this_order'.tr,
+                  //       onYesPressed: () {
+                  //         orderController.updateOrderStatus(
+                  //           controllerOrderModel, parcel! ? AppConstants.handover : AppConstants.confirmed, back: widget.fromLocationScreen? false: true,
+                  //           gotoDashboard: widget.fromLocationScreen? true: false
+                  //         );
+                  //       },
+                  //     ), barrierDismissible: false);
+                  
+                  //   }
+
+                  // else if(pickedUp!) {
+                  //   if(parcel && controllerOrderModel.chargePayer != 'sender') {
+                  //     Get.bottomSheet(VerifyDeliverySheetWidget(
+                  //       currentOrderModel: controllerOrderModel, verify: Get.find<SplashController>().configModel!.orderDeliveryVerification,
+                  //       orderAmount: controllerOrderModel.orderAmount, cod: true, isParcel: parcel,
+                  //     ), isScrollControlled: true).then((value) {
+                  //       if(value == 'show_price_view') {
+                  //         Get.bottomSheet(VerifyDeliverySheetWidget(
+                  //           currentOrderModel: controllerOrderModel, verify: false, isSetOtp: false,
+                  //           orderAmount: controllerOrderModel.orderAmount, cod: true, isSenderPay: false, isParcel: parcel,
+                  //         ), isScrollControlled: true);
+                  //       }
+                  //     });
+                  //   }
+                  //   else if((Get.find<SplashController>().configModel!.orderDeliveryVerification! || cod) && !parcel){
+                  //     Get.bottomSheet(VerifyDeliverySheetWidget(
+                  //       currentOrderModel: controllerOrderModel, verify: Get.find<SplashController>().configModel!.orderDeliveryVerification,
+                  //       orderAmount: controllerOrderModel.orderAmount, cod: cod,
+                  //     ), isScrollControlled: true);
+                  //   }
+                  //   else if(!cod && parcel && controllerOrderModel.chargePayer == 'sender'){
+                  //     Get.bottomSheet(VerifyDeliverySheetWidget(
+                  //       currentOrderModel: controllerOrderModel, verify: Get.find<SplashController>().configModel!.orderDeliveryVerification,
+                  //       orderAmount: controllerOrderModel.orderAmount, cod: cod,
+                  //     ), isScrollControlled: true);
+                  //   }
+                  //   else {
+                  //     Get.find<OrderController>().updateOrderStatus(controllerOrderModel, AppConstants.delivered, back: widget.fromLocationScreen? false: true,
+                  //       gotoDashboard: widget.fromLocationScreen? true: false);
+                  //   }
+                  // }
+
+                  // else if(parcel && controllerOrderModel.chargePayer == 'sender' && cod){
+                  //   Get.bottomSheet(VerifyDeliverySheetWidget(
+                  //     currentOrderModel: controllerOrderModel, verify: Get.find<SplashController>().configModel!.orderDeliveryVerification,
+                  //     orderAmount: controllerOrderModel.orderAmount, cod: cod, isSenderPay: true, isParcel: parcel,
+                  //   ), isScrollControlled: true).then((value) {
+                  //     if(value == 'show_price_view') {
+                  //       Get.bottomSheet(VerifyDeliverySheetWidget(
+                  //         currentOrderModel: controllerOrderModel, verify: false, isSetOtp: false,
+                  //         orderAmount: controllerOrderModel.orderAmount, cod: cod, isSenderPay: true, isParcel: parcel,
+                  //       ), isScrollControlled: true);
+                  //     }
+                  //   });
+                  // }
+
+                  // else if(handover!) {
+                  //   if(Get.find<ProfileController>().profileModel!.active == 1) {
+                  //     Get.find<OrderController>().updateOrderStatus(controllerOrderModel, AppConstants.pickedUp, back: widget.fromLocationScreen? false: true,
+                  //       gotoDashboard: widget.fromLocationScreen? true: false);
+                  //   }else {
+                  //     showCustomSnackBar('make_yourself_online_first'.tr);
+                  //   }
+                  // }
+
+                  },
+                  label: Text(
+                    style: PoppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge, color: Theme.of(context).cardColor),
+                  "Swipe to handover"   ),
+                  dismissThresholds: 0.5, dismissible: false, shimmer: true,
+                  width: 1170, height: 60, buttonSize: 50, radius: 10,
+                  icon: Center(child: Icon(
+                    Get.find<LocalizationController>().isLtr ? Icons.double_arrow_sharp : Icons.keyboard_arrow_left,
+                    color: Colors.white, size: 40.0,
+                  )),
+                  isLtr: Get.find<LocalizationController>().isLtr,
+                  boxShadow: const BoxShadow(blurRadius: 0),
+                  buttonColor: Theme.of(context).primaryColor,
+                  backgroundColor:
+                  Theme.of(context).primaryColor,
+                  //  const Color(0xffF4F7FC),
+                  baseColor: Theme.of(context).primaryColor,
                 ) : showBottomView ? ((accepted! && !parcel && (!cod || restConfModel || selfDelivery))
                  || processing! || confirmed!) ? Container(
                   padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),

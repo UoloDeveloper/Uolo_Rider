@@ -1,7 +1,9 @@
 import 'dart:async';
-
-import 'package:disable_battery_optimization/disable_battery_optimization.dart';
+import 'package:path/path.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
+import 'package:sixam_mart_delivery/features/auth/controllers/auth_controller.dart';
+import 'package:sixam_mart_delivery/features/home/widgets/order_requset_widget.dart';
 import 'package:sixam_mart_delivery/features/notification/controllers/notification_controller.dart';
 import 'package:sixam_mart_delivery/features/order/controllers/order_controller.dart';
 import 'package:sixam_mart_delivery/features/order/screens/order_request_screen.dart';
@@ -27,633 +29,146 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({super.key});
-
-//   Future<void> _loadData() async {
-//     Get.find<OrderController>().getIgnoreList();
-//     Get.find<OrderController>().removeFromIgnoreList();
-//     await Get.find<ProfileController>().getProfile();
-//     await Get.find<OrderController>().getCurrentOrders();
-//     await Get.find<NotificationController>().getNotificationList();
-//     bool isBatteryOptimizationDisabled = GetPlatform.isAndroid ? (await DisableBatteryOptimization.isBatteryOptimizationDisabled)! : true;
-//     if(!isBatteryOptimizationDisabled && GetPlatform.isAndroid) {
-//       DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     _loadData();
-
-//     return Scaffold(
-//       backgroundColor: Theme.of(context).primaryColor,
-//       appBar: AppBar(
-//         backgroundColor: Theme.of(context).primaryColor,
-//         // leading: Padding(
-//         //   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-//         //   child: Image.asset(Images.logo, height: 30, width: 30),
-//         // ),
-//         titleSpacing: 0, elevation: 0,
-//         title: Padding(
-//           padding: const EdgeInsets.all(15),
-//           child: Text(AppConstants.appName, maxLines: 1, overflow: TextOverflow.ellipsis, style: PoppinsMedium.copyWith(
-//             color: Theme.of(context).cardColor, fontSize: 25,
-//           )),
-//         ),
-//         actions: [
-//           IconButton(
-//             icon: GetBuilder<NotificationController>(builder: (notificationController) {
-//               return Stack(children: [
-
-//                 Icon(Icons.notifications, size: 25, color: Theme.of(context).textTheme.bodyLarge!.color),
-
-//                 notificationController.hasNotification ? Positioned(top: 0, right: 0, child: Container(
-//                   height: 10, width: 10, decoration: BoxDecoration(
-//                   color: Theme.of(context).primaryColor, shape: BoxShape.circle,
-//                   border: Border.all(width: 1, color: Theme.of(context).cardColor),
-//                 ),
-//                 )) : const SizedBox(),
-
-//               ]);
-//             }),
-//             onPressed: () => Get.toNamed(RouteHelper.getNotificationRoute()),
-//           ),
-//           GetBuilder<ProfileController>(builder: (profileController) {
-//             return GetBuilder<OrderController>(builder: (orderController) {
-//               return (profileController.profileModel != null && orderController.currentOrderList != null) ? FlutterSwitch(
-//                 width: 75, height: 30, valueFontSize: Dimensions.fontSizeExtraSmall, showOnOff: true,
-//                 activeText: 'online'.tr, inactiveText: 'offline'.tr, activeColor: Theme.of(context).primaryColor,
-//                 value: profileController.profileModel!.active == 1, onToggle: (bool isActive) async {
-//                   if(!isActive && orderController.currentOrderList!.isNotEmpty) {
-//                     showCustomSnackBar('you_can_not_go_offline_now'.tr);
-//                   }else {
-//                     if(!isActive) {
-//                       Get.dialog(ConfirmationDialogWidget(
-//                         icon: Images.warning, description: 'are_you_sure_to_offline'.tr,
-//                         onYesPressed: () {
-//                           Get.back();
-//                           profileController.updateActiveStatus();
-//                         },
-//                       ));
-//                     }else {
-//                       LocationPermission permission = await Geolocator.checkPermission();
-//                       if(permission == LocationPermission.denied || permission == LocationPermission.deniedForever
-//                           || (GetPlatform.isIOS ? false : permission == LocationPermission.whileInUse)) {
-//                         if(GetPlatform.isAndroid) {
-//                           Get.dialog(ConfirmationDialogWidget(
-//                             icon: Images.locationPermission,
-//                             iconSize: 200,
-//                             hasCancel: false,
-//                             description: 'this_app_collects_location_data'.tr,
-//                             onYesPressed: () {
-//                               Get.back();
-//                               _checkPermission(() => profileController.updateActiveStatus());
-//                             },
-//                           ), barrierDismissible: false);
-//                         }else {
-//                           _checkPermission(() => profileController.updateActiveStatus());
-//                         }
-//                       }else {
-//                         profileController.updateActiveStatus();
-//                       }
-//                     }
-//                   }
-//                 },
-//               ) : const SizedBox();
-//             });
-//           }),
-//           const SizedBox(width: Dimensions.paddingSizeSmall),
-//         ],
-//       ),
-
-//       body: RefreshIndicator(
-//         onRefresh: () async {
-//           return await _loadData();
-//         },
-//         child:
-        
-//          SingleChildScrollView(
-//           physics: const AlwaysScrollableScrollPhysics(),
-//           padding: const EdgeInsets.all(0),
-//           child: GetBuilder<ProfileController>(builder: (profileController) {
-//             return Column(children: [
-              
-//               Container(
-//                 width: MediaQuery.of(context).size.width,
-//                 height: 300,
-//                 color: Theme.of(context).primaryColor,
-//                 child: Column(mainAxisAlignment: MainAxisAlignment.start,
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                  children: [
-//                   SizedBox(
-//                     height: 40,
-//                   ),
-//                    Padding(
-//                      padding: const EdgeInsets.all(8.0),
-//                      child: Text('Partner Aswin'.tr, style: TextStyle(
-//                       fontSize: 20,
-//                       color: Colors.white,
-                      
-//                      )),
-//                    ),
-
-
-                  
-//                 ])
-//               ),
-
-//                Container(
-//                 color: Colors.white,
-//                 width: MediaQuery.of(context).size.width,
-//                 height: MediaQuery.of(context).size.height - 300,
-               
-                
-//                )
-//             ]);
-//             // return Column(children: [
-
-//             //   GetBuilder<OrderController>(builder: (orderController) {
-//             //     bool hasActiveOrder = orderController.currentOrderList == null || orderController.currentOrderList!.isNotEmpty;
-//             //     bool hasMoreOrder = orderController.currentOrderList != null && orderController.currentOrderList!.length > 1;
-//             //     return Column(children: [
-//             //       hasActiveOrder ? TitleWidget(
-//             //         title: 'active_order'.tr, onTap: hasMoreOrder ? () {
-//             //           Get.toNamed(RouteHelper.getRunningOrderRoute(), arguments: const RunningOrderScreen());
-//             //         } : null,
-//             //       ) : const SizedBox(),
-//             //       SizedBox(height: hasActiveOrder ? Dimensions.paddingSizeExtraSmall : 0),
-//             //       orderController.currentOrderList == null ? OrderShimmerWidget(
-//             //         isEnabled: orderController.currentOrderList == null,
-//             //       ) : orderController.currentOrderList!.isNotEmpty ? OrderWidget(
-//             //         orderModel: orderController.currentOrderList![0], isRunningOrder: true, orderIndex: 0,
-//             //       ) : const SizedBox(),
-//             //       SizedBox(height: hasActiveOrder ? Dimensions.paddingSizeDefault : 0),
-//             //     ]);
-//             //   }),
-
-//             //   (profileController.profileModel != null && profileController.profileModel!.earnings == 1) ? Column(children: [
-
-//             //     TitleWidget(title: 'earnings'.tr),
-//             //     const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-
-//             //     Container(
-//             //       padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
-//             //       decoration: BoxDecoration(
-//             //         borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-//             //         color: Theme.of(context).primaryColor,
-//             //       ),
-//             //       child: Column(children: [
-
-//             //         Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-
-//             //           const SizedBox(width: Dimensions.paddingSizeSmall),
-//             //           Image.asset(Images.wallet, width: 60, height: 60),
-//             //           const SizedBox(width: Dimensions.paddingSizeLarge),
-
-//             //           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-//             //             Text(
-//             //               'balance'.tr,
-//             //               style: PoppinsMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).cardColor),
-//             //             ),
-//             //             const SizedBox(height: Dimensions.paddingSizeSmall),
-
-//             //             profileController.profileModel != null ? Text(
-//             //               PriceConverterHelper.convertPrice(profileController.profileModel!.balance),
-//             //               style: PoppinsBold.copyWith(fontSize: 24, color: Theme.of(context).cardColor),
-//             //               maxLines: 1, overflow: TextOverflow.ellipsis,
-//             //             ) : Container(height: 30, width: 60, color: Colors.white),
-
-//             //           ]),
-//             //         ]),
-//             //         const SizedBox(height: 30),
-//             //         Row(children: [
-
-//             //           EarningWidget(
-//             //             title: 'today'.tr,
-//             //             amount: profileController.profileModel?.todaysEarning,
-//             //           ),
-//             //           Container(height: 30, width: 1, color: Theme.of(context).cardColor),
-
-//             //           EarningWidget(
-//             //             title: 'this_week'.tr,
-//             //             amount: profileController.profileModel?.thisWeekEarning,
-//             //           ),
-//             //           Container(height: 30, width: 1, color: Theme.of(context).cardColor),
-
-//             //           EarningWidget(
-//             //             title: 'this_month'.tr,
-//             //             amount: profileController.profileModel?.thisMonthEarning,
-//             //           ),
-
-//             //         ]),
-
-//             //       ]),
-//             //     ),
-//             //     const SizedBox(height: Dimensions.paddingSizeDefault),
-//             //   ]) : const SizedBox(),
-
-//             //   TitleWidget(title: 'orders'.tr),
-//             //   const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-
-//             //   Row(children: [
-
-//             //     Expanded(child: CountCardWidget(
-//             //       title: 'todays_orders'.tr, backgroundColor: Theme.of(context).secondaryHeaderColor, height: 180,
-//             //       value: profileController.profileModel?.todaysOrderCount.toString(),
-//             //     )),
-//             //     const SizedBox(width: Dimensions.paddingSizeSmall),
-
-//             //     Expanded(child: CountCardWidget(
-//             //       title: 'this_week_orders'.tr, backgroundColor: Theme.of(context).colorScheme.error, height: 180,
-//             //       value: profileController.profileModel?.thisWeekOrderCount.toString(),
-//             //     )),
-
-//             //   ]),
-//             //   const SizedBox(height: Dimensions.paddingSizeSmall),
-
-//             //   CountCardWidget(
-//             //     title: 'total_orders'.tr, backgroundColor: Theme.of(context).primaryColor, height: 140,
-//             //     value: profileController.profileModel?.orderCount.toString(),
-//             //   ),
-//             //   const SizedBox(height: Dimensions.paddingSizeSmall),
-
-//             //   profileController.profileModel != null ? Container(
-//             //     height: 120, width: MediaQuery.of(context).size.width,
-//             //     padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
-//             //     decoration: BoxDecoration(
-//             //       borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-//             //       color: Theme.of(context).primaryColor.withOpacity(0.05),
-//             //       border: Border.all(width: 2, color: Theme.of(context).primaryColor.withOpacity(0.1)),
-//             //     ),
-//             //     child: Column(
-//             //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             //       crossAxisAlignment: profileController.profileModel!.cashInHands! > 0 && profileController.profileModel!.earnings == 1 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-//             //       children: [
-
-//             //         Row(mainAxisAlignment: profileController.profileModel!.cashInHands! > 0 && profileController.profileModel!.earnings == 1 ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center, children: [
-
-//             //           Text(PriceConverterHelper.convertPrice(profileController.profileModel!.cashInHands), style: PoppinsBold.copyWith(fontSize: 30)),
-//             //           const SizedBox(width: Dimensions.paddingSizeSmall),
-
-//             //           (profileController.profileModel!.cashInHands! > 0 && profileController.profileModel!.earnings == 1) ? CustomButtonWidget(
-//             //             width: 110, height: 40,
-//             //             buttonText: 'view_details'.tr,
-//             //             backgroundColor: Theme.of(context).primaryColor,
-//             //             onPressed: () => Get.toNamed(RouteHelper.getCashInHandRoute()),
-//             //           ) : const SizedBox(),
-
-//             //         ]),
-
-//             //         Text('cash_in_your_hand'.tr, style: PoppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge)),
-
-//             //       ],
-//             //     ),
-//             //   ) : const CashInHandCardShimmer(),
-
-//             // ]);
-          
-          
-//           }),
-//         ),
-//       ),
-//     );
-//   }
-
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({super.key});
-
-//   Future<void> _loadData() async {
-//     // Your data loading logic
-//      Get.find<OrderController>().getIgnoreList();
-//     Get.find<OrderController>().removeFromIgnoreList();
-//     await Get.find<ProfileController>().getProfile();
-//     await Get.find<OrderController>().getCurrentOrders();
-//     await Get.find<NotificationController>().getNotificationList();
-//     bool isBatteryOptimizationDisabled = GetPlatform.isAndroid ? (await DisableBatteryOptimization.isBatteryOptimizationDisabled)! : true;
-//     if(!isBatteryOptimizationDisabled && GetPlatform.isAndroid) {
-//       DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     _loadData(); // Avoid calling this directly; use a FutureBuilder or similar for better practice.
-
-//     return Scaffold(
-//       backgroundColor: Theme.of(context).primaryColor,
-//       appBar: AppBar(
-//         backgroundColor: Theme.of(context).primaryColor,
-//         titleSpacing: 0,
-//         elevation: 0,
-//         title: Padding(
-//           padding: const EdgeInsets.all(15),
-//           child: Text(
-//             'Uolo'.tr,
-//             maxLines: 1,
-//             overflow: TextOverflow.ellipsis,
-//             style: TextStyle(
-//               color: Theme.of(context).cardColor,
-//               fontSize: 25,
-//               fontWeight: FontWeight.w500,
-//             ),
-//           ),
-//         ),
-//         actions: [
-//           IconButton(
-//             icon: Icon(Icons.notifications, size: 25, color: Theme.of(context).textTheme.bodyLarge!.color),
-//             onPressed: () => Get.toNamed('/notifications'), // Replace with your route
-//           ),
-//         ],
-//       ),
-//       body: RefreshIndicator(
-//         onRefresh: _loadData,
-//         child:CustomScrollView(
-//         physics: const NeverScrollableScrollPhysics(),
-//         slivers: [
-//           // Persistent header with curve
-//         GetBuilder<ProfileController>(builder: (profileController) {
-//               return SliverPersistentHeader(
-//                 pinned: true,
-//                 delegate: _FixedHeightHeaderDelegate(
-//                   child: Stack(
-//                     clipBehavior: Clip.none, // Allows overlap
-//                     children: [
-//                       // Header Background
-//                       Container(
-//                         width: MediaQuery.of(context).size.width,
-//                         height: 300,
-//                         color: Theme.of(context).primaryColor,
-//                         child: Padding(
-//                           padding: const EdgeInsets.only(left: 10,right: 10),
-//                           child: Column(
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               Text('Balance'.tr, style: TextStyle(fontSize: 20, color: Colors.white)),
-//                               SizedBox(height: 5),
-//                               Text( "${ profileController.profileModel!.balance != null ?  PriceConverterHelper.convertPrice(profileController.profileModel!.balance) : "0.00" }", style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.bold)),
-                          
-//                                    const SizedBox(height: 20),
-//                         Row(children: [
-              
-//                           EarningWidget(
-
-//                             title: 'today'.tr,
-//                             amount: profileController.profileModel?.todaysEarning,
-//                           ),
-//                           Container(height: 30, width: 1, color: Theme.of(context).cardColor),
-              
-//                           EarningWidget(
-//                             title: 'this_week'.tr,
-//                             amount: profileController.profileModel?.thisWeekEarning,
-//                           ),
-//                           Container(height: 30, width: 1, color: Theme.of(context).cardColor),
-              
-//                           EarningWidget(
-//                             title: 'this_month'.tr,
-//                             amount: profileController.profileModel?.thisMonthEarning,
-//                           ),
-              
-//                         ]),
-
-
-//                         profileController.profileModel != null ? Padding(
-//                           padding: const EdgeInsets.all(15),
-//                           child: Container(
-                            
-//                                           height: 115, width: MediaQuery.of(context).size.width,
-//                                           padding: const EdgeInsets.all(10),
-//                                           decoration: BoxDecoration(
-//                                             borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-//                                             color: Theme.of(context).cardColor.withOpacity(0.05),
-//                                             border: Border.all(width: 2, color: Theme.of(context).primaryColor.withOpacity(0.1)),
-//                                           ),
-//                                           child: Column(
-//                                             mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                                             crossAxisAlignment: profileController.profileModel!.cashInHands! > 0 && profileController.profileModel!.earnings == 1 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-//                                             children: [
-                          
-//                                               Row(mainAxisAlignment: profileController.profileModel!.cashInHands! > 0 && profileController.profileModel!.earnings == 1 ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center, children: [
-                          
-//                                                 Text(PriceConverterHelper.convertPrice(profileController.profileModel!.cashInHands), style: PoppinsBold.copyWith(fontSize: 30,color: Theme.of(context).cardColor)),
-//                                                 const SizedBox(width: Dimensions.paddingSizeSmall),
-                          
-                          
-//                                               ]),
-                          
-//                                               Row(
-//                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                                                 children: [
-//                                                   Text('cash_in_your_hand'.tr, style: PoppinsMedium.copyWith(fontSize: Dimensions.fontSizeLarge,color: Theme.of(context).cardColor )),
-
-                                                  
-//                                                 Column(
-//                           crossAxisAlignment: CrossAxisAlignment.end,
-//                           mainAxisAlignment: MainAxisAlignment.end,
-//                           children: [
-//                             (profileController.profileModel!.cashInHands! > 0 && profileController.profileModel!.earnings == 1) ? CustomButtonWidget(
-//                               width: 110, height: 40,
-//                               buttonText: 'view_details'.tr,
-//                               backgroundColor: Theme.of(context).primaryColor,
-//                               onPressed: () => Get.toNamed(RouteHelper.getCashInHandRoute()),
-//                             ) : const SizedBox(),
-//                           ],
-//                                                 ),
-//                                                 ],
-//                                               ),
-                          
-//                                             ],
-//                                           ),
-//                                         ),
-//                         ) : const CashInHandCardShimmer(),
-
-              
-//                             ],
-//                           ),
-//                         )
-//                         ,
-//                       ),
-//                       // Curve Overlay
-//                       Positioned(
-//                         bottom: -1, // Slight overlap to hide the black line
-//                         left: 0,
-//                         right: 0,
-//                         child: Container(
-//                           height: 10, // Height of the curve
-//                           decoration: const BoxDecoration(
-//                             color: Colors.white,
-//                             borderRadius: BorderRadius.only(
-//                               topLeft: Radius.circular(20),
-//                               topRight: Radius.circular(20),
-//                             ),
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               );
-//             }
-//           ),
-//           // Remaining content
-//        GetBuilder<ProfileController>(builder: (profileController) {
-//               return SliverToBoxAdapter(
-              
-//                 child: ClipRRect(
-//                   // borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-//                   child: SingleChildScrollView(
-//                 physics: AlwaysScrollableScrollPhysics(), 
-//                     child: Container(
-//                       decoration: const BoxDecoration(
-//                         color: Colors.white,
-//                       ),
-//                       height: 1000,
-                    
-//                       child: Column(
-//                         children: [
-//                            GetBuilder<OrderController>(builder: (orderController) {
-//                         bool hasActiveOrder = orderController.currentOrderList == null || orderController.currentOrderList!.isNotEmpty;
-//                         bool hasMoreOrder = orderController.currentOrderList != null && orderController.currentOrderList!.length > 1;
-//                         return Padding(
-//                           padding: const EdgeInsets.all(0),
-//                           child: Column(children: [
-//                             hasActiveOrder ? TitleWidget(
-//                               title: 'active_order'.tr, onTap: hasMoreOrder ? () {
-//                                 Get.toNamed(RouteHelper.getRunningOrderRoute(), arguments: const RunningOrderScreen());
-//                               } : null,
-//                             ) : const SizedBox(),
-//                             SizedBox(height: hasActiveOrder ? Dimensions.paddingSizeExtraSmall : 0),
-//                             orderController.currentOrderList == null ? OrderShimmerWidget(
-//                               isEnabled: orderController.currentOrderList == null,
-//                             ) : orderController.currentOrderList!.isNotEmpty ? OrderWidget(
-//                               orderModel: orderController.currentOrderList![0], isRunningOrder: true, orderIndex: 0,
-//                             ) : const SizedBox(),
-//                             // SizedBox(height: hasActiveOrder ? Dimensions.paddingSizeDefault : 0),
-//                           ]),
-//                         );
-//                       }),
-                                  
-                                  
-                                  
-//                          TitleWidget(title: 'orders'.tr),
-//                     const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-                                  
-//                     Padding(
-//                       padding: const EdgeInsets.all(8.0),
-//                       child: Row(children: [
-                                    
-//                         Expanded(child: CountCardWidget(
-//                           title: 'todays_orders'.tr, backgroundColor: Theme.of(context).secondaryHeaderColor, height: 100,
-//                           value: profileController.profileModel?.todaysOrderCount.toString(),
-//                         )),
-//                         const SizedBox(width: Dimensions.paddingSizeSmall),
-                                    
-//                         Expanded(child: CountCardWidget(
-//                           title: 'this_week_orders'.tr, backgroundColor: Theme.of(context).colorScheme.error, height: 100,
-//                           value: profileController.profileModel?.thisWeekOrderCount.toString(),
-//                         )),
-                                    
-//                       ]),
-//                     ),
-//                     const SizedBox(height: Dimensions.paddingSizeSmall),
-//                       CountCardWidget(
-//                                     title: 'total_orders'.tr, backgroundColor: Theme.of(context).primaryColor, height: 100,
-                    
-//                                     value: profileController.profileModel?.orderCount.toString(),
-//                                   ),
-                                  
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               );
-//             }
-//           ),
-//         ],
-//       ),
-//         // CustomScrollView(
-//         //   physics: const AlwaysScrollableScrollPhysics(),
-//         //   slivers: [
-//         //     // Fixed height container as a persistent header
-//         //     SliverPersistentHeader(
-//         //       pinned: true,
-//         //       delegate: _FixedHeightHeaderDelegate(
-//         //         child: 
-                
-//         //          Column(
-//         //           children: [
-//         //               Container(
-//         //                 width: MediaQuery.of(context).size.width,
-//         //                 height: 300,
-//         //                 color: Theme.of(context).primaryColor,
-//         //               ),
-
-                     
-//         //           ],
-//         //         )
-               
-//         //       ),
-//         //     ),
-//         //     // Remaining content
-//         //     SliverToBoxAdapter(
-
-//         //       child:  Container(
-//         //                 width: MediaQuery.of(context).size.width,
-//         //                 decoration: const BoxDecoration(
-//         //                    color: Colors.white,
-//         //                    borderRadius: BorderRadius.only(
-//         //                     topLeft: Radius.circular(20),
-//         //                     topRight: Radius.circular(20),  
-//         //                    )
-//         //                 ),
-//         //                 height: 1000,
-                       
-//         //               ),
-//         //     ),
-//         //   ],
-//         // ),
-     
-     
-//       ),
-//     );
-//   }
-// }
-
-
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  Future<void> _loadData() async {
-    // Your data loading logic
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+//   Future<void> _loadData() async {
+
+ late final AppLifecycleListener _listener;
+  bool _isNotificationPermissionGranted = true;
+  bool _isBatteryOptimizationGranted = true;
+  Timer? _timer;
+ @override
+  void initState() {
+    super.initState();
+
+    _checkSystemNotification();
+
+    _listener = AppLifecycleListener(
+      onStateChange: _onStateChanged,
+    );
+
+    _loadData();
+
+    Future.delayed(const Duration(milliseconds: 200), () {
+      checkPermission();
+    });
+
+      if(Get.find<ProfileController>().profileModel == null) {
+      Get.find<ProfileController>().getProfile();
+    }
+
+    Get.find<OrderController>().getLatestOrders();
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    if (Get.find<OrderController>().latestOrderList!.order == null) {
+        Get.find<OrderController>().getLatestOrders();
+    }
+    
+    });
+  }
+
+    Future<void> _loadData() async {
     Get.find<OrderController>().getIgnoreList();
     Get.find<OrderController>().removeFromIgnoreList();
     await Get.find<ProfileController>().getProfile();
     await Get.find<OrderController>().getCurrentOrders();
     await Get.find<NotificationController>().getNotificationList();
-    if (GetPlatform.isAndroid) {
-      bool isBatteryOptimizationDisabled = (await DisableBatteryOptimization.isBatteryOptimizationDisabled) ?? true;
-      if (!isBatteryOptimizationDisabled) {
-        DisableBatteryOptimization.showDisableBatteryOptimizationSettings();
-      }
 
-    }
-
-      Get.find<OrderController>().getCurrentOrders();
+          Get.find<OrderController>().getCurrentOrders();
  Timer.periodic(const Duration(seconds: 10), (timer) {
       Get.find<OrderController>().getCurrentOrders();
     });
+  }
+
+  _checkSystemNotification() async {
+    if(await Permission.notification.status.isDenied || await Permission.notification.status.isPermanentlyDenied) {
+      await Get.find<AuthController>().setNotificationActive(false);
+    }
+  }
+
+  void _onStateChanged(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        checkPermission();
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.hidden:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
+  }
+
+    Future<void> checkPermission() async {
+    var notificationStatus = await Permission.notification.status;
+    var batteryStatus = await Permission.ignoreBatteryOptimizations.status;
+
+    if(notificationStatus.isDenied || notificationStatus.isPermanentlyDenied) {
+      setState(() {
+        _isNotificationPermissionGranted = false;
+        _isBatteryOptimizationGranted = true;
+      });
+
+      await Get.find<AuthController>().setNotificationActive(!notificationStatus.isDenied);
+
+    } else if(batteryStatus.isDenied) {
+      setState(() {
+        _isBatteryOptimizationGranted = false;
+        _isNotificationPermissionGranted = true;
+      });
+    } else {
+      setState(() {
+        _isNotificationPermissionGranted = true;
+        _isBatteryOptimizationGranted = true;
+      });
+      Get.find<ProfileController>().setBackgroundNotificationActive(true);
+    }
+
+    if(batteryStatus.isDenied) {
+      Get.find<ProfileController>().setBackgroundNotificationActive(false);
+    }
+  }
+
+    Future<void> requestNotificationPermission() async {
+    if (await Permission.notification.request().isGranted) {
+      checkPermission();
+      return;
+    } else {
+      await openAppSettings();
+    }
+
+    checkPermission();
+  }
+
+  void requestBatteryOptimization() async {
+    var status = await Permission.ignoreBatteryOptimizations.status;
+
+    if (status.isGranted) {
+      return;
+    } else if(status.isDenied) {
+      await Permission.ignoreBatteryOptimizations.request();
+    } else {
+      openAppSettings();
+    }
+
+    checkPermission();
+  }
+
+   @override
+  void dispose() {
+    _listener.dispose();
+    super.dispose();
   }
 
   @override
@@ -668,16 +183,22 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         title: Padding(
           padding: const EdgeInsets.all(15),
-          child: Text(
-            'Uolo'.tr,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Theme.of(context).cardColor,
-              fontSize: 25,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          child:
+           Row(
+             children: [
+              Image.asset("assets/image/Logo copy.png", height: 30, width: 30),
+               Text(
+                'Uolo'.tr,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Theme.of(context).cardColor,
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                ),
+                         ),
+             ],
+           ),
         ),
           actions: [
           IconButton(
@@ -754,6 +275,20 @@ class HomeScreen extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
+                    if(!_isNotificationPermissionGranted)
+            permissionWarning(isBatteryPermission: false, onTap: requestNotificationPermission, closeOnTap: () {
+              setState(() {
+                _isNotificationPermissionGranted = true;
+              });
+            }),
+
+          if(!_isBatteryOptimizationGranted)
+            permissionWarning(isBatteryPermission: true, onTap: requestBatteryOptimization, closeOnTap: () {
+              setState(() {
+                _isBatteryOptimizationGranted = true;
+              });
+            }),
+
                   GetBuilder<ProfileController>(builder: (profileController) {
                     return Stack(
                       clipBehavior: Clip.none,
@@ -914,26 +449,18 @@ class HomeScreen extends StatelessWidget {
                       color: Theme.of(context).cardColor,
                       child: Column(
                         children: [
-                    //       if (orderController.currentOrderList?.isNotEmpty ?? false)
-                    //         Padding(
-                    //           padding: const EdgeInsets.only(left: Dimensions.paddingSizeDefault, right: Dimensions.paddingSizeDefault, ),
-                    //           child: TitleWidget(
-                    //             title: 'active_order'.tr,
-                    //              onTap: hasMoreOrder ? () {
-                    //   // Get.toNamed(RouteHelper.getRunningOrderRoute(), arguments: const RunningOrderScreen());
-                    //   //  Get.toNamed(RouteHelper.getRunningOrderRoute(), arguments: const OrderRequestScreen(
-                    //   //   onTap: null,
-                    //   //  ));
-                    //   Get.to(OrderRequestScreen(onTap: (){},));
-                    // } : null,
-                    //           ),
-                    //         ),
-                    //       if (orderController.currentOrderList != null)
-                    //         OrderWidget(
-                    //           orderModel: orderController.currentOrderList!.first,
-                    //           isRunningOrder: true,
-                    //           orderIndex: 0,
-                    //         ),
+                          GetBuilder<OrderController>(
+                            builder: (orderController) {
+                              return  orderController.isLoading  ? const SizedBox() : 
+                              orderController.latestOrderList != null && orderController.latestOrderList!.order != null  
+                                  ? Container(
+                                    child: OrderRequestWidget(deliveryRequestModel: orderController.latestOrderList!, index: 0, onTap: (){}),
+                                  )
+                                  : const SizedBox() ;
+                         
+                            },
+                          ),
+                        //  OrderRequestWidget(orderModel: orderController.latestOrderList![index], index: index, onTap: widget.onTap)
                           // TitleWidget(title: 'orders'.tr),
 
 
@@ -1127,6 +654,8 @@ class HomeScreen extends StatelessWidget {
                       ),
                     );
                   }),
+              
+              
                 ],
               ),
             );
@@ -1136,7 +665,56 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+  Widget permissionWarning({required bool isBatteryPermission, required Function() onTap, required Function() closeOnTap}) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.7),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+              child: Row(children: [
 
+                if(isBatteryPermission)
+                  const Padding(
+                    padding: EdgeInsets.only(right: 8.0),
+                    child: Icon(Icons.warning_rounded, color: Colors.yellow,),
+                  ),
+
+                Expanded(
+                  child: Row(children: [
+                    Flexible(
+                      child: Text(
+                        isBatteryPermission ? 'for_better_performance_allow_notification_to_run_in_background'.tr
+                            : 'notification_is_disabled_please_allow_notification'.tr,
+                        maxLines: 2, style: PoppinsBold.copyWith(fontSize: Dimensions.fontSizeSmall, color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(width: Dimensions.paddingSizeSmall),
+                    const Icon(Icons.arrow_circle_right_rounded, color: Colors.white, size: 24,),
+                  ]),
+                ),
+
+                const SizedBox(width: 20),
+              ]),
+            ),
+
+            Positioned(
+              top: 5, right: 5,
+              child: InkWell(
+                onTap: closeOnTap,
+                child: const Icon(Icons.clear, color: Colors.white, size: 18),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
 class _FixedHeightHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;

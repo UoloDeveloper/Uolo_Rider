@@ -9,7 +9,8 @@ abstract class OrderRepositoryInterface implements RepositoryInterface {
   Future<dynamic> getLatestOrders();
   Future<dynamic> updateOrderStatus(UpdateStatusBodyModel updateStatusBody, List<MultipartBody> proofAttachment);
   Future<dynamic> getOrderDetails(int? orderID);
-  Future<dynamic> acceptOrder(int? orderID);
+  Future<dynamic> acceptOrder(int? orderID , int? requestId);
+  Future<dynamic> declineOrder(int? orderID , int? requestId);
   List<IgnoreModel> getIgnoreList();
   void setIgnoreList(List<IgnoreModel> ignoreList);
 }

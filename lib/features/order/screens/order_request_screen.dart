@@ -67,8 +67,6 @@ import 'package:get/get.dart';
 // }
 
 
-
-
 class OrderRequestScreen extends StatefulWidget {
   final Function? onTap;
   const OrderRequestScreen({super.key, required this.onTap});
@@ -110,7 +108,9 @@ backgroundColor: Theme.of(context).primaryColor ,
       body: GetBuilder<OrderController>(builder: (orderController) {
         return orderController.currentOrderList != null ? orderController.currentOrderList!.isNotEmpty ? RefreshIndicator(
           onRefresh: () async {
-            await Get.find<OrderController>().getCurrentOrders();
+            await Get.find<OrderController>().getCurrentOrders(
+              
+            );
           },
           child: ListView.builder(
             itemCount: orderController.currentOrderList!.length,
