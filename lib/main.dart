@@ -35,8 +35,8 @@ Future<void> main() async {
   if(GetPlatform.isAndroid) {
     
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-         apiKey: "AIzaSyBsKYkb4r9kQjiWIHMcHX8XQ9RGtpiUuf4", 
+  options: const FirebaseOptions(
+  apiKey: "AIzaSyBsKYkb4r9kQjiWIHMcHX8XQ9RGtpiUuf4", 
   appId: "1:349709842275:android:a15c32725531f7bbc84556", 
   messagingSenderId: "349709842275", 
   projectId: "uolo-6b0e9",
@@ -97,8 +97,11 @@ class MyApp extends StatelessWidget {
 
     return GetBuilder<ThemeController>(builder: (themeController) {
       return GetBuilder<LocalizationController>(builder: (localizeController) {
+
         return GetBuilder<SplashController>(builder: (splashController) {
-          return (GetPlatform.isWeb && splashController.configModel == null) ? const SizedBox() : GetMaterialApp(
+          return (GetPlatform.isWeb && splashController.configModel == null) ? const SizedBox() 
+          :
+           GetMaterialApp(
             title: AppConstants.appName,
             debugShowCheckedModeBanner: false,
             navigatorKey: Get.key,

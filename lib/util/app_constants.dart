@@ -3,10 +3,10 @@ import 'package:sixam_mart_delivery/util/images.dart';
 
 class AppConstants {
   static const String appName = 'Uolo Rider';
-  static const double appVersion = 2.12; ///Flutter sdk 3.24.5
+  static const double appVersion =  2.12;
 
   static const String baseUrl =
-  // "https://testorders.uolodelivery.com";
+  // "https://livetest.uolodelivery.com";
   
   'https://orders.uolodelivery.com';
 
@@ -53,6 +53,8 @@ class AppConstants {
 
 
   ///chat url
+  
+
   static const String getConversationListUri = '/api/v1/delivery-man/message/list';
   static const String getMessageListUri = '/api/v1/delivery-man/message/details';
   static const String sendMessageUri = '/api/v1/delivery-man/message/send';

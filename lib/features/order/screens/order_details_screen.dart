@@ -994,9 +994,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> with WidgetsBin
                   )),
                   isLtr: Get.find<LocalizationController>().isLtr,
                   boxShadow: const BoxShadow(blurRadius: 0),
-                  buttonColor: Theme.of(context).primaryColor,
+                  buttonColor: handover! ? Theme.of(context).primaryColor :Colors.green ,
                   backgroundColor:
-                  Theme.of(context).primaryColor,
+                  // Theme.of(context).primaryColor,
+                  handover?  Theme.of(context).primaryColor :Colors.green ,
                   //  const Color(0xffF4F7FC),
                   baseColor: Theme.of(context).primaryColor,
                 ) : const SizedBox() : const SizedBox(),

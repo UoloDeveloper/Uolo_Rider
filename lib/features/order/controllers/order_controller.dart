@@ -198,7 +198,7 @@ class OrderController extends GetxController implements GetxService {
       otp: status == AppConstants.delivered || (parcel! && status == AppConstants.pickedUp) ? _otp : null,
     );
     ResponseModel responseModel = await orderServiceInterface.updateOrderStatus(updateStatusBody, multiParts);
-    Get.back(result: responseModel.isSuccess);
+    // Get.back(result: responseModel.isSuccess);
     if(responseModel.isSuccess) {
       if(back) {
         Get.back();

@@ -148,8 +148,10 @@ class ProfileController extends GetxController implements GetxService {
     );
 
     if(Get.find<SplashController>().configModel!.webSocketStatus!) {
+      // print("web socket true");
       await profileServiceInterface.recordWebSocketLocation(_recordLocation!);
     } else {
+      // print("web socket false");
       await profileServiceInterface.recordLocation(_recordLocation!);
     }
   }
